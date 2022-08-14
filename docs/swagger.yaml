@@ -1,0 +1,214 @@
+basePath: /v1
+definitions:
+  user.DTO:
+    properties:
+      birthday:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+    required:
+    - birthday
+    - firstName
+    - lastName
+    type: object
+  user.ServiceError:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  user.User:
+    properties:
+      birthday:
+        type: string
+      createdAt:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: string
+      lastName:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  user.response:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/user.User'
+        type: array
+    type: object
+host: example.org
+info:
+  contact: {}
+  description: example description
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger API ProjectName
+  version: "1.0"
+paths:
+  /v1/users:
+    get:
+      consumes:
+      - application/json
+      description: list user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ServiceError'
+      summary: fetch user
+      tags:
+      - User
+    post:
+      consumes:
+      - application/json
+      description: create user by id
+      parameters:
+      - description: New model
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/user.DTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/user.ServiceError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/user.ServiceError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/user.ServiceError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ServiceError'
+      summary: create user
+      tags:
+      - User
+  /v1/users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete user by id
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ServiceError'
+      summary: delete user
+      tags:
+      - User
+    get:
+      consumes:
+      - application/json
+      description: get user by id
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/user.ServiceError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/user.ServiceError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ServiceError'
+      summary: get user
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: update user by id
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New model
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/user.DTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/user.ServiceError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/user.ServiceError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/user.ServiceError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/user.ServiceError'
+      summary: update user
+      tags:
+      - User
+swagger: "2.0"
+tags:
+- description: template service
+  name: Template-srv
