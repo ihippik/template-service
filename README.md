@@ -6,5 +6,6 @@ Fictional service example
 * Dockerfile
 * Environment variables
 * Database migration
+* Unit-tests
 * Swagger docs
 * Makefile
