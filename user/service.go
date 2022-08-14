@@ -68,7 +68,7 @@ func (svc *Service) UpdateUser(ctx context.Context, id uuid.UUID, dto DTO) (*Use
 	model, err := svc.repo.Get(ctx, id)
 	if err != nil {
 		svc.logger.Error("could not get user", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("could not get user: %w", err)
 	}
 
 	if model == nil {
