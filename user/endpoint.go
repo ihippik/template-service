@@ -95,6 +95,8 @@ func (e *Endpoint) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	resp.Data = append(resp.Data, model)
 
+	w.WriteHeader(http.StatusCreated)
+
 	e.writeResp(w, resp)
 }
 

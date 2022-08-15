@@ -2,7 +2,6 @@ package user
 
 import (
 	"bytes"
-	"github.com/gorilla/mux"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -10,6 +9,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"go.uber.org/zap"
@@ -358,7 +358,7 @@ func TestEndpoint_CreateUser(t *testing.T) {
 					nil,
 				)
 			},
-			wantHTTPCode: http.StatusOK,
+			wantHTTPCode: http.StatusCreated,
 			want:         []byte(`{"data":[{"id":"ccae37ea-d41e-4371-a3a3-89203b9e2608","firstName":"Elon","lastName":"Rogozin","birthday":"1971-06-28","createdAt":"2022-11-17T20:00:00Z","updatedAt":null}]}`),
 		},
 		{
