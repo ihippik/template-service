@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"embed"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,18 +10,13 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
-	"github.com/pressly/goose/v3"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 
 	"github.com/ihippik/template-service/config"
+	"github.com/ihippik/template-service/migrations"
 	"github.com/ihippik/template-service/user"
 )
-
-//go:embed migrations/*.sql
-var embedMigrations embed.FS
 
 var gitVersion = "not_specified"
 
@@ -60,43 +54,15 @@ func main() {
 					{
 						Name:  "up",
 						Usage: "migration roll up",
-						Action: func(cCtx *cli.Context) error {
-							db, err := sqlx.Connect("postgres", cCtx.String("conn"))
-							if err != nil {
-								return err
-							}
-
-							goose.SetBaseFS(embedMigrations)
-							if err := goose.SetDialect("postgres"); err != nil {
-								return err
-							}
-
-							if err := goose.Up(db.DB, "migrations"); err != nil {
-								return err
-							}
-
-							return nil
+						Action: func(ctx *cli.Context) error {
+							return migrations.Up(ctx.String("conn"))
 						},
 					},
 					{
 						Name:  "down",
 						Usage: "migration roll down",
-						Action: func(cCtx *cli.Context) error {
-							db, err := sqlx.Connect("postgres", cCtx.String("conn"))
-							if err != nil {
-								return err
-							}
-
-							goose.SetBaseFS(embedMigrations)
-							if err := goose.SetDialect("postgres"); err != nil {
-								return err
-							}
-
-							if err := goose.Down(db.DB, "migrations"); err != nil {
-								return err
-							}
-
-							return nil
+						Action: func(ctx *cli.Context) error {
+							return migrations.Down(ctx.String("conn"))
 						},
 					},
 				},

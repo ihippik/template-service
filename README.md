@@ -7,6 +7,7 @@ Fictional service example
 * Environment variables
 * Database migration
 * Unit-tests
+* Integration tests
 * Mock DB connection
 * Swagger docs
 * Makefile
