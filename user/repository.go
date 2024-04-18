@@ -60,15 +60,15 @@ func (r *Repository) Get(ctx context.Context, id uuid.UUID) (*User, error) {
 
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
-		return nil, nil
+		return nil, errNotExists
 	case err != nil:
-		return nil, err
+		return nil, fmt.Errorf("exec: %w", err)
 	}
 
 	return &model, nil
 }
 
-// Update update user form the database by her id.
+// Update user form the database by her id.
 func (r *Repository) Update(ctx context.Context, user *User) error {
 	_, err := r.db.ExecContext(
 		ctx,
@@ -80,7 +80,7 @@ func (r *Repository) Update(ctx context.Context, user *User) error {
 		user.ID,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("exec: %w", err)
 	}
 
 	return nil
@@ -98,7 +98,7 @@ func (r *Repository) Create(ctx context.Context, user *User) error {
 		user.CreatedAt,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("exec: %w", err)
 	}
 
 	return nil
@@ -107,7 +107,7 @@ func (r *Repository) Create(ctx context.Context, user *User) error {
 // Delete user from the database by her id.
 func (r *Repository) Delete(ctx context.Context, id uuid.UUID) error {
 	if _, err := r.db.ExecContext(ctx, "DELETE FROM users WHERE id=$1", id); err != nil {
-		return err
+		return fmt.Errorf("exec: %w", err)
 	}
 
 	return nil

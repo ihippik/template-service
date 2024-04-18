@@ -87,7 +87,7 @@ func TestRepository_Get(t *testing.T) {
 				},
 			},
 			want:    nil,
-			wantErr: nil,
+			wantErr: errors.New("not exists"),
 		},
 		{
 			name: "some err",
@@ -102,7 +102,7 @@ func TestRepository_Get(t *testing.T) {
 				},
 			},
 			want:    nil,
-			wantErr: errors.New("some err"),
+			wantErr: errors.New("exec: some err"),
 		},
 	}
 
@@ -178,7 +178,7 @@ func TestRepository_Delete(t *testing.T) {
 					rows: sqlmock.NewRows(columns),
 				},
 			},
-			wantErr: errors.New("some err"),
+			wantErr: errors.New("exec: some err"),
 		},
 	}
 
@@ -266,7 +266,7 @@ func TestRepository_Update(t *testing.T) {
 					rows: sqlmock.NewRows(columns),
 				},
 			},
-			wantErr: errors.New("some err"),
+			wantErr: errors.New("exec: some err"),
 		},
 	}
 
@@ -360,7 +360,7 @@ func TestRepository_Created(t *testing.T) {
 					rows: sqlmock.NewRows(columns),
 				},
 			},
-			wantErr: errors.New("some err"),
+			wantErr: errors.New("exec: some err"),
 		},
 	}
 

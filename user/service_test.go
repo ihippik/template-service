@@ -4,15 +4,15 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"github.com/ihippik/template-service/config"
 	"testing"
 	"time"
 
-	"bou.ke/monkey"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"go.uber.org/zap"
+
+	"github.com/ihippik/template-service/config"
 )
 
 func TestService_GetUser(t *testing.T) {
@@ -75,7 +75,7 @@ func TestService_GetUser(t *testing.T) {
 				id: uuid.MustParse("ccae37ea-d41e-4371-a3a3-89203b9e2608"),
 			},
 			want:    nil,
-			wantErr: errors.New("some error"),
+			wantErr: errors.New("could not get user: some error"),
 		},
 		{
 			name: "not found",
@@ -83,7 +83,7 @@ func TestService_GetUser(t *testing.T) {
 				setGet(
 					uuid.MustParse("ccae37ea-d41e-4371-a3a3-89203b9e2608"),
 					nil,
-					nil,
+					errNotExists,
 				)
 			},
 			args: args{
@@ -182,9 +182,9 @@ func TestService_CreateUser(t *testing.T) {
 		dto DTO
 	}
 
-	wayback := time.Date(2022, 8, 1, 0, 0, 0, 0, time.UTC)
-	patch := monkey.Patch(time.Now, func() time.Time { return wayback })
-	defer patch.Unpatch()
+	timeNow = func() time.Time {
+		return time.Date(2022, 8, 1, 0, 0, 0, 0, time.UTC)
+	}
 
 	repo := new(MockRepo)
 
@@ -296,9 +296,9 @@ func TestService_UpdateUser(t *testing.T) {
 		dto DTO
 	}
 
-	wayback := time.Date(2022, 8, 1, 0, 0, 0, 0, time.UTC)
-	patch := monkey.Patch(time.Now, func() time.Time { return wayback })
-	defer patch.Unpatch()
+	timeNow = func() time.Time {
+		return time.Date(2022, 8, 1, 0, 0, 0, 0, time.UTC)
+	}
 
 	repo := new(MockRepo)
 
@@ -457,7 +457,7 @@ func TestService_UpdateUser(t *testing.T) {
 				)
 			},
 			want:    nil,
-			wantErr: errors.New("some err"),
+			wantErr: errors.New("update user: some err"),
 		},
 	}
 

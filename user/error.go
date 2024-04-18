@@ -1,6 +1,9 @@
 package user
 
-import "net/http"
+import (
+	"errors"
+	"net/http"
+)
 
 // service error codes.
 const (
@@ -10,6 +13,8 @@ const (
 	NotFound            = "NOT_FOUND"
 	ValidationError     = "VALIDATION_ERROR"
 )
+
+var errNotExists = errors.New("not exists")
 
 // ServiceError represent service custom error.
 type ServiceError struct {

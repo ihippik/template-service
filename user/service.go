@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -26,6 +27,8 @@ type Service struct {
 	repo   repository
 }
 
+var timeNow = time.Now
+
 // NewService creates new Service entity.
 func NewService(cfg *config.Config, logger *zap.Logger, repo repository) *Service {
 	return &Service{cfg: cfg, logger: logger, repo: repo}
@@ -34,17 +37,18 @@ func NewService(cfg *config.Config, logger *zap.Logger, repo repository) *Servic
 // GetUser get user entity by her identification.
 func (svc *Service) GetUser(ctx context.Context, id uuid.UUID) (*User, error) {
 	model, err := svc.repo.Get(ctx, id)
-	if err != nil {
-		svc.logger.Error("could not get user", zap.Error(err))
-		return nil, err
+	if err == nil {
+		return model, nil
 	}
 
-	if model == nil {
+	if errors.Is(err, errNotExists) {
 		svc.logger.Warn("user not found", zap.String("id", id.String()))
 		return nil, newNotFoundErr(NotFound, "user not found")
 	}
 
-	return model, nil
+	svc.logger.Error("could not get user", zap.Error(err))
+
+	return nil, fmt.Errorf("could not get user: %w", err)
 }
 
 // ListUser fetch all users.
@@ -76,7 +80,7 @@ func (svc *Service) UpdateUser(ctx context.Context, id uuid.UUID, dto DTO) (*Use
 		return nil, newNotFoundErr(NotFound, "user not found")
 	}
 
-	now := time.Now().UTC()
+	now := timeNow().UTC()
 
 	model.UpdatedAt = &now
 	model.FirstName = dto.FirstName
@@ -84,7 +88,7 @@ func (svc *Service) UpdateUser(ctx context.Context, id uuid.UUID, dto DTO) (*Use
 
 	if err := svc.repo.Update(ctx, model); err != nil {
 		svc.logger.Error("update user error", zap.Error(err))
-		return nil, err
+		return nil, fmt.Errorf("update user: %w", err)
 	}
 
 	return model, nil
@@ -102,7 +106,7 @@ func (svc *Service) CreateUser(ctx context.Context, dto DTO) (*User, error) {
 		FirstName: dto.FirstName,
 		LastName:  dto.LastName,
 		Birthday:  dto.Birthday,
-		CreatedAt: time.Now().UTC(),
+		CreatedAt: timeNow().UTC(),
 	}
 
 	if err := svc.repo.Create(ctx, &model); err != nil {

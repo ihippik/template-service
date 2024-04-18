@@ -9,7 +9,6 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/gorilla/mux"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 
@@ -101,15 +100,17 @@ func run(mCtx context.Context) error {
 	svc := user.NewService(cfg, logger, user.NewRepository(db))
 	endpts := user.NewEndpoint(logger, svc)
 
-	router := mux.NewRouter()
-	router.HandleFunc("/v1/users", endpts.ListUsers).Methods(http.MethodGet)
-	router.HandleFunc("/v1/users/{id}", endpts.GetUser).Methods(http.MethodGet)
-	router.HandleFunc("/v1/users/{id}", endpts.UpdateUser).Methods(http.MethodPut)
-	router.HandleFunc("/v1/users", endpts.CreateUser).Methods(http.MethodPost)
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("GET /v1/users", endpts.ListUsers)
+	mux.HandleFunc("GET /v1/users/{id}", endpts.GetUser)
+	mux.HandleFunc("PUT /v1/users/{id}", endpts.UpdateUser)
+	mux.HandleFunc("POST /v1/users", endpts.CreateUser)
+	mux.HandleFunc("DELETE /v1/users/{id}", endpts.DeleteUser)
 
 	srv := http.Server{
 		Addr:              cfg.ServerAddr,
-		Handler:           router,
+		Handler:           mux,
 		ReadHeaderTimeout: time.Second * 10,
 	}
 
